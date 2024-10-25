@@ -13,8 +13,6 @@ TO DO:
 - Normalise the problem stars and characterise them
 """
 
-
-
 ### Seaborn customisation ###
 sns.set_theme(style="darkgrid")
 
@@ -23,8 +21,8 @@ example_data = glob.glob("ExampleStars/*.dat")
 test_data = glob.glob("TestStars/*.dat")
 
 ### Choose which stellar spectrum to plot ###
-file_index_example = int(input(f"\nEnter the index of the file you want to plot (0-{len(example_data)-1}): "))
-file_index_test = int(input(f"\nEnter the index of the file you want to plot (0-{len(test_data)-1}): "))
+file_index_example = int(input(f"\nEnter the index of the file you want to plot [EXAMPLE STAR] (0-{len(example_data)-1}): "))
+file_index_test = int(input(f"\nEnter the index of the file you want to plot [TEST STAR] (0-{len(test_data)-1}): "))
 
 plt.figure(num=1001)
 
@@ -37,9 +35,6 @@ plt.xlabel("Wavelength [A]")
 plt.ylabel(r"Normalised Flux [erg/cm$^2$/A/s]")
 
 plt.figure(num=2001)
-
-### Normalisation of test spectrum ###
-#normPlot.normplot("/Users/madsmikkelsen/ULL/1. Semester/Atmosferas_Estelares/ProblemStar1.dat")
 
 selected_test = test_data[file_index_test]
 test_star = pd.read_csv(selected_test, sep='\t', header=None, names=["Wavelength", "Flux"])
