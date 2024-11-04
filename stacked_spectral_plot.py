@@ -26,7 +26,8 @@ absorption_lines = {
     4101: 'Hδ', # Gray
     4338: 'Hγ', # Gray
     4383: 'Fe I', # Gray
-    4540: 'He II', # Walborn & Fitzpatrick 1990
+    4471: 'He I', # Gray
+    4541: 'He II', # Walborn & Fitzpatrick 1990
     4684: 'He II', # Walborn & Fitzpatrick 1990
     4860: 'Hβ', # Gray
     4921: 'Fe I', # Gray

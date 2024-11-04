@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
+from scipy.integrate import simps
 import seaborn as sns
 sns.set_theme(style="darkgrid")
 
@@ -13,9 +14,10 @@ absorption_lines = {
     3932: 'Ca II', # Gray
     3967: 'Ca II', # Gray
     4030: 'blend', # Gray
-    4101: 'Hδ', # Gray
-    4338: 'Hγ', # Gray
+    4102: 'Hδ', # Gray
+    4340: 'Hγ', # Gray
     4383: 'Fe I', # Gray
+    4471: 'He I', # NIST
     4540: 'He II', # Walborn & Fitzpatrick 1990
     4684: 'He II', # Walborn & Fitzpatrick 1990
     4860: 'Hβ', # Gray
@@ -29,7 +31,7 @@ absorption_lines = {
     6284: 'DIB', # Snow, York & Welty 1977, Herbig 1995
     6347: 'TENT.',
     6380: 'TENT.',
-    6561: 'Hα', # Gray
+    6560: 'Hα', # Gray
     6614: 'DIB', # Herbig 1995
     6684: 'TENT.'
 }
@@ -97,5 +99,45 @@ plot_spectrum_with_lines(wavelength_1, flux_1, norm_flux_1, 'Unknown Star 1 - No
 wavelength_2, flux_2 = np.loadtxt(unknown_star_2, unpack=True)
 norm_flux_2 = normalize_spectrum_smooth(wavelength_2, flux_2)
 plot_spectrum_with_lines(wavelength_2, flux_2, norm_flux_2, 'Unknown Star 2 - Normalized and Unnormalized Spectrum')
+
+def calculate_equivalent_width(wavelength, flux, line_center, width=5):
+    """
+    Calculate the equivalent width of an absorption line.
+
+    Parameters:
+    wavelength: array-like
+        Array of wavelength values.
+    flux: array-like
+        Array of flux values.
+    line_center: float
+        Central wavelength of the absorption line.
+    width: float
+        Range around the line center to consider for integration, in Angstroms.
+
+    Returns:
+    equivalent_width: float
+        The equivalent width of the absorption line.
+    """
+    # Define the integration range around the line center
+    min_range = line_center - width
+    max_range = line_center + width
+
+    # Select the wavelength and flux in the range of interest
+    mask = (wavelength >= min_range) & (wavelength <= max_range)
+    selected_wavelength = wavelength[mask]
+    selected_flux = flux[mask]
+
+    continuum_flux = np.mean(selected_flux[:5])
+
+    # Calculate the equivalent width using Simpson's rule for integration
+    ew = simps(1 - (selected_flux / continuum_flux), selected_wavelength)
+    
+    return ew
+
+# Calculate equivalent width for selected absorption lines
+for line_wavelength, line_label in absorption_lines.items():
+    if line_wavelength in [4102, 4340, 4471, 4540, 4684, 4860, 6560]:  
+        ew = calculate_equivalent_width(wavelength_1, norm_flux_1, line_wavelength)
+        print(f"Equivalent Width of {line_label} at {line_wavelength} Å: {ew:.2f} Å")
 
 plt.show()
